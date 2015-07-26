@@ -92,8 +92,8 @@ var Message=sequelize.define('messages',{
 	  retrieveAllMessage: function(onSuccess, onError) {
 			Message.findAll({}, {raw: true}).success(onSuccess).error(onError);
 	  },
-       retrieveByIdMessage: function(message_id, onSuccess, onError) {
-			Message.find({where: {id: message_id}}, {raw: true}).success(onSuccess).error(onError);
+       retrieveByIdMessage: function(user_id, onSuccess, onError) {
+			Message.findAll({where: {user_id: user_id}}, {raw: true}).success(onSuccess).error(onError);
 			// Message.findAll({
 			// 	include:[{
 			// 		model:User,required:true}]},{raw:true}).success(onSuccess).error(onError);
@@ -150,7 +150,7 @@ router.route('/authenticate')
 				token:token
 			});
 		}} else {
-			res.send('Authentication Failed');
+			res.send('user not found');
 		}
 	}, function(error){
 			res.send("Failed");
@@ -285,10 +285,10 @@ router.route('/messages')
 		if (messages) {
 		  res.json(messages);
 		} else {
-		  res.send(401, "User not found");
+		  res.send(401, "Messages not found");
 		}
 	  }, function(error) {
-		res.send("User not found");
+		res.send("Some error");
 	  });
 })
 .post(function(req, res) {
@@ -299,24 +299,24 @@ router.route('/messages')
 	var message = Message.build({ user_id:user_id,from_id:from_id,descr:descr });
 
 	message.addMessage(function(success){
-		res.json({ message: 'User created!' });
+		res.json({ message: 'Message Sent!' });
 	},
 	function(err) {
 		res.send(err);
 	});
 });
-router.route('/messages/:message_id')
+router.route('/messages/:user_id')
 .get(function(req, res) {
 	var message = Message.build();
 
-	message.retrieveByIdMessage(req.params.message_id, function(messages) {
+	message.retrieveByIdMessage(req.params.user_id, function(messages) {
 		if (messages) {
 		  res.json(messages);
 		} else {
 		  res.send(401, "User not found");
 		}
 	  }, function(error) {
-		res.send("User not found");
+		res.send("some error");
 	  });
 });
 
