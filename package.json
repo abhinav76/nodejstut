@@ -1,0 +1,12 @@
+{
+  "name": "myapp",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "~1.0.1",
+    "crypto": "~0.0.3",
+    "express": "~4.0.0",
+    "jsonwebtoken": "^5.0.4",
+    "mysql": "~2.5.0",
+    "sequelize": "~1.7.0"
+  }
+}
