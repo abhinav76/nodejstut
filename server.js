@@ -71,7 +71,7 @@ var User = sequelize.define('users', {
 			shasum.update(password);
 			password = shasum.digest('hex');
 
-			User.update({ username: username,password: password},{where: {id: id} }).success(onSuccess).error(onError);
+			User.update({ username: username,password: password}, {id: id} ).success(onSuccess).error(onError);
 	   },
 	  checkuser: function(onSuccess,onError){
 	  	var username=this.username;
@@ -144,7 +144,10 @@ var Session=sequelize.define('sessions',{
 	   sessionUpdate:function(user_id,onSuccess,onError){
 	   var token=this.token;
 	   Session.update({token:token},{user_id:user_id}).success(onSuccess).error(onError);
-	}
+	},
+	removeSession: function(user_id, onSuccess, onError) {
+			Session.destroy({user_id: user_id}).success(onSuccess).error(onError);
+	  }
 }
 });
 
@@ -280,7 +283,24 @@ router.use(function(req,res,next){
 	});
 
 
+router.route('/logout')
+.delete(function(req,res){
+	var token = req.body.token || req.query.token || req.headers['x-access-token'];
+	var token_decoded=jwtDecode(token);
+	var user_id=token_decoded.id;
+	var session=Session.build();
+	session.removeSession(user_id,function(sessions){
+		if (sessions) {
+		  res.json({ message: 'Session removed!' });
+		} else {
+		  res.send(401, "User not found");
+		}
+	  }, function(error) {
+		res.send("User not found");
+	});
 
+
+});
 
 router.route('/users')
 
@@ -313,22 +333,16 @@ router.route('/users')
 	  }, function(error) {
 		res.send("User not found");
 	  });
-});
-
-
-// on routes that end in /users/:user_id
-// ----------------------------------------------------
-router.route('/users/:user_id')
-
-// update a user (accessed at PUT http://localhost:8080/api/users/:user_id)
+})
 .put(function(req, res) {
 	var user = User.build();
-	//token_decoded=jwtDecode(token);
-	//user_id=token_decoded
+	var token = req.body.token || req.query.token || req.headers['x-access-token'];
+	var token_decoded=jwtDecode(token);
+	var user_id=token_decoded.id;
 	user.username = req.body.username;
 	user.password = req.body.password;
 
-	user.updateByIdUser(req.params.user_id, function(success) {
+	user.updateByIdUser(user_id, function(success) {
 		console.log(success);
 		if (success) {
 			res.json({ message: 'User updated!' });
@@ -338,7 +352,15 @@ router.route('/users/:user_id')
 	  }, function(error) {
 		res.send("User not gg found");
 	  });
-})
+});
+
+
+// on routes that end in /users/:user_id
+// ----------------------------------------------------
+router.route('/users/:user_id')
+
+// update a user (accessed at PUT http://localhost:8080/api/users/:user_id)
+
 
 // get a user by id(accessed at GET http://localhost:8080/api/users/:user_id)
 .get(function(req, res) {
