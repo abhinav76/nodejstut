@@ -45,8 +45,8 @@ var User = sequelize.define('users', {
     token:DataTypes.STRING
   }, {
     instanceMethods: {
-      retrieveAllUser: function(onSuccess, onError) {
-			User.findAll({}, {raw: true}).success(onSuccess).error(onError);
+      retrieveAllUser: function(user_id,onSuccess, onError) {
+			User.findAll({where:{id:{ne:user_id}}}, {raw: true}).success(onSuccess).error(onError);
 	  },
       retrieveByIdUser: function(user_id, onSuccess, onError) {
 			User.find({where: {id: user_id}}, {raw: true}).success(onSuccess).error(onError);
@@ -323,8 +323,10 @@ router.route('/users')
 // get all the users (accessed at GET http://localhost:8080/api/users)
 .get(function(req, res) {
 	var user = User.build();
-	//var token_decoded=jwtDecode(token);
-	 user.retrieveAllUser(function(users) {
+	var token = req.body.token || req.query.token || req.headers['x-access-token'];
+	var token_decoded=jwtDecode(token);
+	var user_id=token_decoded.id;
+	 user.retrieveAllUser(user_id,function(users) {
 	 	if (users) {
 	 	res.json(users);
 	 	} else {
