@@ -1,0 +1,121 @@
+// app.set('superSecret', config.secret);
+// var crypto = require('crypto');
+// var DataTypes = require("sequelize");
+
+// var User = sequelize.define('users', {
+//     username: DataTypes.STRING,
+//     password: DataTypes.STRING,
+//     token:DataTypes.STRING
+//   }, {
+//     instanceMethods: {
+//       retrieveAllUser: function(user_id,onSuccess, onError) {
+// 			User.findAll({where:{id:{ne:user_id}}}, {raw: true}).success(onSuccess).error(onError);
+// 	  },
+//       retrieveByIdUser: function(user_id, onSuccess, onError) {
+// 			User.find({where: {id: user_id}}, {raw: true}).success(onSuccess).error(onError);
+// 	  },
+//       addUser: function(onSuccess, onError) {
+// 			var username = this.username;
+// 			var password = this.password;
+
+// 			var shasum = crypto.createHash('sha1');
+// 			shasum.update(password);
+// 			password = shasum.digest('hex');
+
+// 			User.build({ username: username, password: password })
+// 			    .save().success(onSuccess).error(onError);
+// 	   },
+// 	  updateByIdUser: function(user_id, onSuccess, onError) {
+// 			var id = user_id;
+// 			var username = this.username;
+// 			var password = this.password;
+
+// 			var shasum = crypto.createHash('sha1');
+// 			shasum.update(password);
+// 			password = shasum.digest('hex');
+
+// 			User.update({ username: username,password: password}, {id: id} ).success(onSuccess).error(onError);
+// 	   },
+// 	  checkuser: function(onSuccess,onError){
+// 	  	var username=this.username;
+// 	  	User.find({where:{username:username}},{raw:true}).success(onSuccess).error(onError);
+// 	},
+// 		// updateToken: function(user_id,onSuccess,onError){
+// 		// 	//var id=this.id;
+// 		// 	var token=this.token;
+// 		// 	User.update({token:token},{id:user_id}).success(onSuccess).error(onError);
+// 		// },
+//       removeByIdUser: function(user_id, onSuccess, onError) {
+// 			User.destroy({where: {id: user_id}}).success(onSuccess).error(onError);
+// 	  }
+//     }
+//   });
+
+// var Message=sequelize.define('messages',{
+// 	user_id:DataTypes.INTEGER,
+// 	from_id:DataTypes.INTEGER,
+// 	descr:DataTypes.STRING
+// },{
+// 	instanceMethods : {
+// 		 // retrieveAllMessage: function(onSuccess, onError) {
+// 			// Message.findAll({}, {raw: true}).success(onSuccess).error(onError);
+// 	  // },
+// 	  retrieveAllMessage: function(onSuccess, onError) {
+// 			Message.findAll({}, {raw: true}).success(onSuccess).error(onError);
+// 	  },
+//        retrieveByIdMessage: function(user_id, onSuccess, onError) {
+// 			Message.findAll({where: {user_id: user_id}}, {raw: true}).success(onSuccess).error(onError);
+// 			// Message.findAll({
+// 			// 	include:[{
+// 			// 		model:User,required:true}]},{raw:true}).success(onSuccess).error(onError);
+// 	  },
+//       addMessage: function(onSuccess, onError) {
+// 			var user_id = this.user_id;
+// 			var from_id = this.from_id;
+// 			var descr=this.descr;
+
+// 			// var shasum = crypto.createHash('sha1');
+// 			// shasum.update(password);
+// 			// password = shasum.digest('hex');
+
+// 			Message.build({ user_id: user_id, from_id: from_id,descr:descr })
+// 			    .save().success(onSuccess).error(onError);
+// 	   }
+	  
+// 	}
+// });
+
+// var Session=sequelize.define('sessions',{
+// 	user_id:DataTypes.INTEGER,
+// 	token:DataTypes.STRING
+// },{
+// 	instanceMethods: {
+// 		  addSession: function(onSuccess, onError) {
+// 			var user_id = this.user_id;
+// 			var token = this.token;
+// 			Session.build({ user_id: user_id, token: token})
+// 			    .save().success(onSuccess).error(onError);
+// 	   },
+// 	   checkSession:function(token,onSuccess,onError){
+// 	   	Session.find({where:{token:token}},{raw:true}).success(onSuccess).error(onError);
+
+// 	   },
+// 	   sessionUser:function(user_id,onSuccess,onError){
+// 	   	Session.find({where:{user_id:user_id}},{raw:true}).success(onSuccess).error(onError);
+
+// 	   },
+// 	   sessionUpdate:function(user_id,onSuccess,onError){
+// 	   var token=this.token;
+// 	   Session.update({token:token},{user_id:user_id}).success(onSuccess).error(onError);
+// 	},
+// 	removeSession: function(user_id, onSuccess, onError) {
+// 			Session.destroy({user_id: user_id}).success(onSuccess).error(onError);
+// 	  }
+// }
+// });
+
+ // Message.belongsTo(User,{foreignKey:'user_id'});
+ // User.hasMany(Message,{foreignKey:'user_id'});
+ // Session.belongsTo(User,{foreignKey:'user_id'});
+ // User.hasOne(Session,{foreignKey:'user_id'});
+

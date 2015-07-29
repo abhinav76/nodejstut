@@ -4,7 +4,7 @@
 var express = require('express'),
 	bodyParser = require('body-parser');
 var cors=require('cors');
-
+//var users=require('./routes/users');
 var app = express();
 app.use(bodyParser());
 app.use(cors());
@@ -12,6 +12,7 @@ var env = app.get('env') == 'development' ? 'dev' : app.get('env');
 var port = process.env.PORT || 8080;
 var jwt    = require('jsonwebtoken');
 var jwtDecode=require('jwt-decode');
+
 
 // IMPORT MODELS
 // =============================================================================
@@ -37,130 +38,16 @@ var sequelize = new Sequelize(
 );
 app.set('superSecret', config.secret);
 var crypto = require('crypto');
-var DataTypes = require("sequelize");
-
-var User = sequelize.define('users', {
-    username: DataTypes.STRING,
-    password: DataTypes.STRING,
-    token:DataTypes.STRING
-  }, {
-    instanceMethods: {
-      retrieveAllUser: function(user_id,onSuccess, onError) {
-			User.findAll({where:{id:{ne:user_id}}}, {raw: true}).success(onSuccess).error(onError);
-	  },
-      retrieveByIdUser: function(user_id, onSuccess, onError) {
-			User.find({where: {id: user_id}}, {raw: true}).success(onSuccess).error(onError);
-	  },
-      addUser: function(onSuccess, onError) {
-			var username = this.username;
-			var password = this.password;
-
-			var shasum = crypto.createHash('sha1');
-			shasum.update(password);
-			password = shasum.digest('hex');
-
-			User.build({ username: username, password: password })
-			    .save().success(onSuccess).error(onError);
-	   },
-	  updateByIdUser: function(user_id, onSuccess, onError) {
-			var id = user_id;
-			var username = this.username;
-			var password = this.password;
-
-			var shasum = crypto.createHash('sha1');
-			shasum.update(password);
-			password = shasum.digest('hex');
-
-			User.update({ username: username,password: password}, {id: id} ).success(onSuccess).error(onError);
-	   },
-	  checkuser: function(onSuccess,onError){
-	  	var username=this.username;
-	  	User.find({where:{username:username}},{raw:true}).success(onSuccess).error(onError);
-	},
-		// updateToken: function(user_id,onSuccess,onError){
-		// 	//var id=this.id;
-		// 	var token=this.token;
-		// 	User.update({token:token},{id:user_id}).success(onSuccess).error(onError);
-		// },
-      removeByIdUser: function(user_id, onSuccess, onError) {
-			User.destroy({where: {id: user_id}}).success(onSuccess).error(onError);
-	  }
-    }
-  });
-
-var Message=sequelize.define('messages',{
-	user_id:DataTypes.INTEGER,
-	from_id:DataTypes.INTEGER,
-	descr:DataTypes.STRING
-},{
-	instanceMethods : {
-		 // retrieveAllMessage: function(onSuccess, onError) {
-			// Message.findAll({}, {raw: true}).success(onSuccess).error(onError);
-	  // },
-	  retrieveAllMessage: function(onSuccess, onError) {
-			Message.findAll({}, {raw: true}).success(onSuccess).error(onError);
-	  },
-       retrieveByIdMessage: function(user_id, onSuccess, onError) {
-			Message.findAll({where: {user_id: user_id}}, {raw: true}).success(onSuccess).error(onError);
-			// Message.findAll({
-			// 	include:[{
-			// 		model:User,required:true}]},{raw:true}).success(onSuccess).error(onError);
-	  },
-      addMessage: function(onSuccess, onError) {
-			var user_id = this.user_id;
-			var from_id = this.from_id;
-			var descr=this.descr;
-
-			// var shasum = crypto.createHash('sha1');
-			// shasum.update(password);
-			// password = shasum.digest('hex');
-
-			Message.build({ user_id: user_id, from_id: from_id,descr:descr })
-			    .save().success(onSuccess).error(onError);
-	   }
-	  
-	}
-});
-
-var Session=sequelize.define('sessions',{
-	user_id:DataTypes.INTEGER,
-	token:DataTypes.STRING
-},{
-	instanceMethods: {
-		  addSession: function(onSuccess, onError) {
-			var user_id = this.user_id;
-			var token = this.token;
-			Session.build({ user_id: user_id, token: token})
-			    .save().success(onSuccess).error(onError);
-	   },
-	   checkSession:function(token,onSuccess,onError){
-	   	Session.find({where:{token:token}},{raw:true}).success(onSuccess).error(onError);
-
-	   },
-	   sessionUser:function(user_id,onSuccess,onError){
-	   	Session.find({where:{user_id:user_id}},{raw:true}).success(onSuccess).error(onError);
-
-	   },
-	   sessionUpdate:function(user_id,onSuccess,onError){
-	   var token=this.token;
-	   Session.update({token:token},{user_id:user_id}).success(onSuccess).error(onError);
-	},
-	removeSession: function(user_id, onSuccess, onError) {
-			Session.destroy({user_id: user_id}).success(onSuccess).error(onError);
-	  }
-}
-});
-
- Message.belongsTo(User,{foreignKey:'user_id'});
- User.hasMany(Message,{foreignKey:'user_id'});
- Session.belongsTo(User,{foreignKey:'user_id'});
- User.hasOne(Session,{foreignKey:'user_id'});
-
-
+var User=require('./models/users');
+var Message=require('./models/messages');
+var Session=require('./models/sessions');
+//require('./routes/authenticate');
+//require('./routes/users')(app);
 
 // IMPORT ROUTES
 // =============================================================================
 var router = express.Router();
+
 
 // on routes that end in /users
 // ----------------------------------------------------
@@ -219,16 +106,7 @@ router.route('/authenticate')
 				},function(err){
 				res.send(err);
 			});
-			// var session=Session.build();
 			
-			
-			// var session= Session.build({user_id:user_id,token:token});
-			// session.addSession(function(success){
-			// 	res.json({message:"Session created"});
-
-			// },function(err){
-			// 	res.send(err);
-			// });
 				}			
 		}
 	 else {
@@ -246,9 +124,7 @@ router.use(function(req,res,next){
 
 	  // decode token
 	  if (token) {
-	  	//var token_decoded=jwtDecode(token);
-	  	//return res.send(token_decoded.password);
-	    // verifies secret and checks exp
+	  	
 	     jwt.verify(token, app.get('superSecret'), function(err, decoded) {      
 	      if (err) {
 	         return res.json({ success: false, message: 'Failed to authenticate token.' });    
@@ -265,8 +141,7 @@ router.use(function(req,res,next){
 	         },function(err){
 	         	res.send("Error");
 	         });
-	         //req.decoded = decoded;    
-	         //next();
+	         
 	       }
 	     });
 
@@ -309,7 +184,9 @@ router.route('/users')
 
 	var username = req.body.username; //bodyParser does the magic
 	var password = req.body.password;
-
+	var shasum = crypto.createHash('sha1');
+			shasum.update(password);
+			password = shasum.digest('hex');
 	var user = User.build({ username: username, password: password });
 
 	user.addUser(function(success){
@@ -394,19 +271,7 @@ router.route('/users/:user_id')
 	  });
 });
 router.route('/messages')
-// .get(function(req, res) {
-// 	var message = Message.build();
 
-// 	message.retrieveAllMessage(function(messages) {
-// 		if (messages) {
-// 		  res.json(messages);
-// 		} else {
-// 		  res.send(401, "Messages not found");
-// 		}
-// 	  }, function(error) {
-// 		res.send("Some error");
-// 	  });
-// })
 .post(function(req, res) {
 	var token = req.body.token || req.query.token || req.headers['x-access-token'];
 	var token_decoded=jwtDecode(token);
