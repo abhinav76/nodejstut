@@ -4,6 +4,7 @@ var config = require('../database.json')[env];
 var password = config.password ? config.password : null;
 var express = require('express');
 var app=express();
+//var Message=require('../models/messages');
 // initialize database connection
 var sequelize = new Sequelize(
 	config.database,
@@ -24,7 +25,7 @@ var DataTypes = require("sequelize");
 var User = sequelize.define('users', {
     username: DataTypes.STRING,
     password: DataTypes.STRING,
-    token:DataTypes.STRING
+    //token:DataTypes.STRING
   }, {
     instanceMethods: {
       retrieveAllUser: function(user_id,onSuccess, onError) {
@@ -69,4 +70,6 @@ var User = sequelize.define('users', {
 	  }
     }
   });
+// User.hasMany(Message,{foreignKey:'from_id'});
+// Message.belongsTo(User,{foreignKey:'user_id'});
 module.exports=User;
