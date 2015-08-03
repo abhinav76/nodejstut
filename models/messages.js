@@ -25,9 +25,25 @@ var sequelize = new Sequelize(
 );
 var DataTypes = require("sequelize");
 var Message=sequelize.define('messages',{
-	user_id:DataTypes.INTEGER,
-	from_id:DataTypes.INTEGER,
-	descr:DataTypes.STRING,
+	user_id:{
+		type:DataTypes.INTEGER,
+		validate:{
+			isNumeric:true,
+			notEmpty:true
+		}
+	},
+	from_id:{
+		type:DataTypes.INTEGER,
+		validate:{
+			isNumeric:true
+		}
+	},
+	descr:{
+		type:DataTypes.STRING,
+		validate:{
+			notEmpty:true
+		}
+	},
 	createdAt:{type:DataTypes.DATE,defaultValue:DataTypes.NOW}
 },{
 	instanceMethods : {

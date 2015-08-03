@@ -23,8 +23,20 @@ var crypto = require('crypto');
 var DataTypes = require("sequelize");
 
 var User = sequelize.define('users', {
-    username: DataTypes.STRING,
-    password: DataTypes.STRING,
+    username: {
+    	type:DataTypes.STRING,
+    	validate:{
+    		isEmail:true,
+    		notEmpty:true
+    	}
+    },
+    password: {
+    	type:DataTypes.STRING,
+    	validate:{
+    		notEmpty:true,
+    		
+    	}
+    }
     //token:DataTypes.STRING
   }, {
     instanceMethods: {
