@@ -10,6 +10,8 @@ var User=require('../models/users');
 var Message=require('../models/messages');
 var Session=require('../models/sessions');
 var router = express.Router();
+
+
 router.use(function(req,res,next){
 	 var token = req.body.token || req.query.token || req.headers['x-access-token'];
 

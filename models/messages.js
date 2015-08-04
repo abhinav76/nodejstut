@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 var express = require('express'),
 	bodyParser = require('body-parser');
-	var app = express();
+var app = express();
 app.use(bodyParser());
 // db config
 var env = "dev";

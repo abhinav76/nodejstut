@@ -57,7 +57,8 @@ router.route('/')
 	var user = User.build({ username: username, password: password });
 
 	user.addUser(function(success){
-		res.json({ message: 'User created!' });
+		var userid=success.id;
+		res.json(userid);
 	},
 	function(err) {
 		res.send(err);

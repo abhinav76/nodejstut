@@ -9,19 +9,10 @@ app.use(bodyParser());
 app.use(cors());
 var env = app.get('env') == 'development' ? 'dev' : app.get('env');
 var port = process.env.PORT || 8080;
-var jwt    = require('jsonwebtoken');
-var jwtDecode=require('jwt-decode');
 var authenticate=require('./routes/authenticate');
 var users=require('./routes/users');
 var messages=require('./routes/messages');
 var logout=require('./routes/logout');
-var Message=require('./models/messages');
-var User=require('./models/users');
-
-
-
-// Message.belongsTo(User,{foreignKey:'user_id'});
-// User.hasMany(Message,{foreignKey:'user_id'});
 // IMPORT ROUTES
 // =============================================================================
 var router = express.Router();
